@@ -1,11 +1,10 @@
 package com.interview.infogain.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+import javax.validation.constraints.Positive;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
@@ -26,7 +25,8 @@ public class Transaction {
     @Column(name = "customer_id")
     private Long customerId;
 
+//    @Positive
     @Column(name = "amount")
-    private Double amount;
+    private BigDecimal amount;
 
 }

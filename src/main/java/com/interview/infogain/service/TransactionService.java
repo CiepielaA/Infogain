@@ -6,8 +6,6 @@ import com.interview.infogain.repository.TransactionRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.time.temporal.TemporalAdjuster;
-import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 
 @Service
@@ -19,10 +17,6 @@ public class TransactionService {
         return transactionRepository.findAll();
     }
 
-    public List<Transaction> getAllTransactionsForCustomer(Long id) {
-        return transactionRepository.findByCustomerId(id);
-    }
-
     public List<Transaction> getAllTransactionsBetween(LocalDateTime start, LocalDateTime end) {
         return transactionRepository.findByTimestampBetween(start, end);
     }
@@ -32,27 +26,27 @@ public class TransactionService {
                 .orElseThrow(ResourceNotFoundException::new);
     }
 
+    public List<Transaction> getAllTransactionsForCustomer(Long customerId) {
+        return transactionRepository.findByCustomerId(customerId);
+    }
+
+    public List<Transaction> getAllTransactionsForCustomerBetween(Long customerId, LocalDateTime start, LocalDateTime end) {
+        return transactionRepository.findByCustomerIdAndTimestampBetween(customerId, start, end);
+    }
+
     public Transaction createTransaction(Transaction transaction) {
         return transactionRepository.save(transaction);
     }
 
-    public Transaction updateTransaction(Long id, Transaction transactionDetails) {
-        Transaction transaction = transactionRepository.findById(id)
+    public Transaction updateTransaction(Long id, Transaction transaction) {
+        Transaction existingTransaction = transactionRepository
+                .findById(id)
                 .orElseThrow(ResourceNotFoundException::new);
 
-        transaction.setTimestamp(transactionDetails.getTimestamp());
-        transaction.setCustomerId(transactionDetails.getCustomerId());
-        transaction.setAmount(transactionDetails.getAmount());
+        existingTransaction.setTimestamp(transaction.getTimestamp());
+        existingTransaction.setCustomerId(transaction.getCustomerId());
+        existingTransaction.setAmount(transaction.getAmount());
 
-        return transactionRepository.save(transaction);
+        return transactionRepository.save(existingTransaction);
     }
-
-//    public List<Transaction> getTransactionsForCustomerFromLastThreeMonths(Long customerId) {
-//        LocalDateTime threeMonthsAgo = LocalDateTime.now().minusMonths(3);
-//        LocalDateTime now = LocalDateTime.now();
-//
-//        now.with(TemporalAdjusters.lastDayOfMonth())
-//                .wi
-//        return transactionRepository.findByCustomerIdAndTimestampBetween(customerId, threeMonthsAgo, now);
-//    }
 }
