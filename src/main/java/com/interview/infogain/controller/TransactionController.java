@@ -2,15 +2,18 @@ package com.interview.infogain.controller;
 
 import com.interview.infogain.model.Transaction;
 import com.interview.infogain.service.TransactionService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/transactions")
+@RequiredArgsConstructor
 public class TransactionController {
 
-    private TransactionService transactionService;
+    private final TransactionService transactionService;
 
     @GetMapping
     public List<Transaction> getAllTransactions() {
@@ -28,6 +31,7 @@ public class TransactionController {
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public Transaction createTransaction(@RequestBody Transaction transaction) {
         return transactionService.createTransaction(transaction);
     }
@@ -35,6 +39,11 @@ public class TransactionController {
     @PutMapping("/{id}")
     public Transaction updateTransaction(@PathVariable long id, @RequestBody Transaction transaction) {
         return transactionService.updateTransaction(id, transaction);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteTransaction(@PathVariable long id) {
+        transactionService.deleteTransaction(id);
     }
 
 }

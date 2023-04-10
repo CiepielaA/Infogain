@@ -3,15 +3,17 @@ package com.interview.infogain.service;
 import com.interview.infogain.exception.ResourceNotFoundException;
 import com.interview.infogain.model.Transaction;
 import com.interview.infogain.repository.TransactionRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class TransactionService {
 
-    private TransactionRepository transactionRepository;
+    private final TransactionRepository transactionRepository;
 
     public List<Transaction> getAllTransactions() {
         return transactionRepository.findAll();
@@ -21,16 +23,16 @@ public class TransactionService {
         return transactionRepository.findByTimestampBetween(start, end);
     }
 
-    public Transaction getTransactionById(Long id) {
+    public Transaction getTransactionById(long id) {
         return transactionRepository.findById(id)
                 .orElseThrow(ResourceNotFoundException::new);
     }
 
-    public List<Transaction> getAllTransactionsForCustomer(Long customerId) {
+    public List<Transaction> getAllTransactionsForCustomer(long customerId) {
         return transactionRepository.findByCustomerId(customerId);
     }
 
-    public List<Transaction> getAllTransactionsForCustomerBetween(Long customerId, LocalDateTime start, LocalDateTime end) {
+    public List<Transaction> getAllTransactionsForCustomerBetween(long customerId, LocalDateTime start, LocalDateTime end) {
         return transactionRepository.findByCustomerIdAndTimestampBetween(customerId, start, end);
     }
 
@@ -38,7 +40,7 @@ public class TransactionService {
         return transactionRepository.save(transaction);
     }
 
-    public Transaction updateTransaction(Long id, Transaction transaction) {
+    public Transaction updateTransaction(long id, Transaction transaction) {
         Transaction existingTransaction = transactionRepository
                 .findById(id)
                 .orElseThrow(ResourceNotFoundException::new);
@@ -48,5 +50,9 @@ public class TransactionService {
         existingTransaction.setAmount(transaction.getAmount());
 
         return transactionRepository.save(existingTransaction);
+    }
+
+    public void deleteTransaction(long id){
+        transactionRepository.deleteById(id);
     }
 }
