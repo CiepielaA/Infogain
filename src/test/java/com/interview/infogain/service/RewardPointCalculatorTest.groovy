@@ -137,4 +137,59 @@ class RewardPointCalculatorTest extends Specification {
         result['APRIL'] == BigDecimal.valueOf(0)
         result['MAY'] == BigDecimal.valueOf(1)
     }
+
+
+    def "should return correct points per customer"() {
+        given:
+        def transactions = [
+                Transaction.builder().id(1L).customerId(1L).amount(BigDecimal.valueOf(10)).build(),
+                Transaction.builder().id(2L).customerId(2L).amount(BigDecimal.valueOf(60)).build(),
+                Transaction.builder().id(3L).customerId(1L).amount(BigDecimal.valueOf(120)).build(),
+                Transaction.builder().id(4L).customerId(2L).amount(BigDecimal.valueOf(0)).build(),
+                Transaction.builder().id(5L).customerId(1L).amount(BigDecimal.valueOf(90)).build(),
+        ]
+
+        when:
+        def result = calculator.totalPointsPerCustomer(transactions)
+
+        then:
+        result.size() == 2
+        result[1L] == 130
+        result[2L] == 10
+    }
+
+    def "should return correct points per customer per month"() {
+        given:
+        def transactions = [
+                Transaction.builder().id(1L).customerId(1L).amount(BigDecimal.valueOf(60)).timestamp(LocalDateTime.of(2022, 3, 10, 0, 0)).build(),
+                Transaction.builder().id(2L).customerId(1L).amount(BigDecimal.valueOf(120)).timestamp(LocalDateTime.of(2022, 3, 25, 0, 0)).build(),
+                Transaction.builder().id(3L).customerId(1L).amount(BigDecimal.valueOf(10)).timestamp(LocalDateTime.of(2022, 3, 25, 0, 0)).build(),
+                Transaction.builder().id(4L).customerId(1L).amount(BigDecimal.valueOf(90)).timestamp(LocalDateTime.of(2022, 4, 10, 0, 0)).build(),
+                Transaction.builder().id(5L).customerId(2L).amount(BigDecimal.valueOf(60)).timestamp(LocalDateTime.of(2022, 4, 5, 0, 0)).build(),
+                Transaction.builder().id(6L).customerId(2L).amount(BigDecimal.valueOf(80)).timestamp(LocalDateTime.of(2022, 4, 15, 0, 0)).build(),
+                Transaction.builder().id(7L).customerId(3L).amount(BigDecimal.valueOf(80)).timestamp(LocalDateTime.of(2022, 3, 15, 0, 0)).build(),
+                Transaction.builder().id(8L).customerId(3L).amount(BigDecimal.valueOf(80)).timestamp(LocalDateTime.of(2022, 4, 15, 0, 0)).build(),
+                Transaction.builder().id(9L).customerId(3L).amount(BigDecimal.valueOf(80)).timestamp(LocalDateTime.of(2022, 5, 15, 0, 0)).build(),
+                Transaction.builder().id(10L).customerId(4L).amount(BigDecimal.valueOf(80)).timestamp(LocalDateTime.of(2022, 5, 15, 0, 0)).build(),
+                Transaction.builder().id(11L).customerId(4L).amount(BigDecimal.valueOf(10)).timestamp(LocalDateTime.of(2022, 5, 15, 0, 0)).build(),
+                Transaction.builder().id(12L).customerId(4L).amount(BigDecimal.valueOf(110)).timestamp(LocalDateTime.of(2022, 5, 15, 0, 0)).build(),
+
+        ]
+
+        when:
+        def result = calculator.pointsPerCustomerPerMonth(transactions)
+
+        then:
+        result.size() == 7
+        result["1,MARCH"] == 100
+        result["1,APRIL"] == 40
+        result["2,APRIL"] == 40
+        result["3,MARCH"] == 30
+        result["3,APRIL"] == 30
+        result["3,MAY"] == 30
+        result["4,MAY"] == 100
+    }
+
+
+
 }
