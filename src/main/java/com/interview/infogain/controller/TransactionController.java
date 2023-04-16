@@ -2,6 +2,7 @@ package com.interview.infogain.controller;
 
 import com.interview.infogain.model.Transaction;
 import com.interview.infogain.service.TransactionService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +21,7 @@ public class TransactionController {
         return transactionService.getAllTransactions();
     }
 
-    @GetMapping("/{customerId}")
+    @GetMapping("/customers/{customerId}")
     public List<Transaction> getAllTransactionsForCustomer(@PathVariable long customerId) {
         return transactionService.getAllTransactionsForCustomer(customerId);
     }
@@ -32,12 +33,19 @@ public class TransactionController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Transaction createTransaction(@RequestBody Transaction transaction) {
+    public Transaction createTransaction(@Valid @RequestBody Transaction transaction) {
         return transactionService.createTransaction(transaction);
     }
 
+    ////////////////////////
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public List<Transaction> createTransaction(@Valid @RequestBody List<Transaction> transactions) {
+        return transactionService.createTransactions(transactions);
+    }
+
     @PutMapping("/{id}")
-    public Transaction updateTransaction(@PathVariable long id, @RequestBody Transaction transaction) {
+    public Transaction updateTransaction(@PathVariable long id, @Valid @RequestBody Transaction transaction) {
         return transactionService.updateTransaction(id, transaction);
     }
 

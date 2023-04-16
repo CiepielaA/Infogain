@@ -14,6 +14,7 @@ import java.util.List;
 public class TransactionService {
 
     private final TransactionRepository transactionRepository;
+    private static final String TRANSACTION_NOT_FOUND_MESSAGE = "Transaction not found, id: ";
 
     public List<Transaction> getAllTransactions() {
         return transactionRepository.findAll();
@@ -25,12 +26,12 @@ public class TransactionService {
 
     public Transaction getTransactionById(long id) {
         return transactionRepository.findById(id)
-                .orElseThrow(ResourceNotFoundException::new);
+                .orElseThrow(() -> new ResourceNotFoundException(TRANSACTION_NOT_FOUND_MESSAGE + id));
     }
 
     public List<Transaction> getAllTransactionsForCustomer(long customerId) {
-        return transactionRepository.findByCustomerId(customerId);
-    }
+
+        return transactionRepository.findByCustomerId(customerId);    }
 
     public List<Transaction> getAllTransactionsForCustomerBetween(long customerId, LocalDateTime start, LocalDateTime end) {
         return transactionRepository.findByCustomerIdAndTimestampBetween(customerId, start, end);
@@ -40,10 +41,15 @@ public class TransactionService {
         return transactionRepository.save(transaction);
     }
 
+    /////////////////////////////
+    public List<Transaction> createTransactions(List<Transaction> transactions) {
+        return transactionRepository.saveAll(transactions);
+    }
+
     public Transaction updateTransaction(long id, Transaction transaction) {
         Transaction existingTransaction = transactionRepository
                 .findById(id)
-                .orElseThrow(ResourceNotFoundException::new);
+                .orElseThrow(() -> new ResourceNotFoundException(TRANSACTION_NOT_FOUND_MESSAGE + id));
 
         existingTransaction.setTimestamp(transaction.getTimestamp());
         existingTransaction.setCustomerId(transaction.getCustomerId());
