@@ -3,14 +3,10 @@ package com.interview.infogain.service
 import com.interview.infogain.exception.ResourceNotFoundException
 import com.interview.infogain.model.Transaction
 import com.interview.infogain.repository.TransactionRepository
-import com.interview.infogain.service.TransactionService
 import spock.lang.Specification
 import spock.lang.Subject
-import spock.lang.Unroll
-import java.math.BigDecimal
-import java.time.LocalDateTime
-import java.util.*
 
+import java.time.LocalDateTime
 
 class TransactionServiceSpec extends Specification {
 
