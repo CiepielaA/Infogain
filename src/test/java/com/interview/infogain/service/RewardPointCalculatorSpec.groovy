@@ -6,7 +6,7 @@ import spock.lang.Subject
 
 import java.time.LocalDateTime
 
-class RewardPointCalculatorTest extends Specification {
+class RewardPointCalculatorSpec extends Specification {
 
     @Subject
     RewardPointCalculator calculator = new RewardPointCalculator()
@@ -33,7 +33,6 @@ class RewardPointCalculatorTest extends Specification {
         amount || expectedResult
         -10    || 0
         0      || 0
-        50     || 0
         50     || 0
         50.5   || 0
         51     || 1
@@ -150,7 +149,7 @@ class RewardPointCalculatorTest extends Specification {
         ]
 
         when:
-        def result = calculator.totalPointsPerCustomer(transactions)
+        def result = calculator.pointsPerCustomer(transactions)
 
         then:
         result.size() == 2
@@ -173,7 +172,6 @@ class RewardPointCalculatorTest extends Specification {
                 Transaction.builder().id(10L).customerId(4L).amount(BigDecimal.valueOf(80)).timestamp(LocalDateTime.of(2022, 5, 15, 0, 0)).build(),
                 Transaction.builder().id(11L).customerId(4L).amount(BigDecimal.valueOf(10)).timestamp(LocalDateTime.of(2022, 5, 15, 0, 0)).build(),
                 Transaction.builder().id(12L).customerId(4L).amount(BigDecimal.valueOf(110)).timestamp(LocalDateTime.of(2022, 5, 15, 0, 0)).build(),
-
         ]
 
         when:
@@ -189,7 +187,4 @@ class RewardPointCalculatorTest extends Specification {
         result["3,MAY"] == 30
         result["4,MAY"] == 100
     }
-
-
-
 }

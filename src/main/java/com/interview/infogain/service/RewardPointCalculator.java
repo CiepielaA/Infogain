@@ -27,7 +27,7 @@ public class RewardPointCalculator {
         return points;
     }
 
-    public HashMap<Long, Integer> totalPointsPerCustomer(List<Transaction> transactions) {
+    public HashMap<Long, Integer> pointsPerCustomer(List<Transaction> transactions) {
         HashMap<Long, Integer> customerIdToPoints = new HashMap<>();
 
         for (Transaction transaction : transactions) {
@@ -39,40 +39,25 @@ public class RewardPointCalculator {
     }
 
     public HashMap<String, Integer> pointsPerCustomerPerMonth(List<Transaction> transactions) {
-        HashMap<String, Integer> customerIdToPoints = new HashMap<>();
+        HashMap<String, Integer> customerPerMonthPoints = new HashMap<>();
 
         for (Transaction transaction : transactions) {
             int points = calculatePointsForAmount(transaction.getAmount());
-            customerIdToPoints.merge(createKey(transaction), points, Integer::sum);
+            customerPerMonthPoints.merge(createKey(transaction), points, Integer::sum);
         }
 
-        return customerIdToPoints;
+        return customerPerMonthPoints;
     }
 
     private String createKey(Transaction transaction){
-        return transaction.getCustomerId().toString() + "," + transaction.getTimestamp().getMonth().name();
+        return transaction.getTimestamp().getMonth().name() + " customerId: " + transaction.getCustomerId().toString();
     }
-
-//    public HashMap<String, Integer> pointsPerMonth (List<Transaction> customerTransactions) {
-//        HashMap<String, Integer> sumByMonths = new HashMap<>();
-//
-//        for (Transaction transaction: customerTransactions){
-//            sumByMonths.merge(
-//                    transaction.getTimestamp().getMonth().name(),
-//                    calculatePointsForAmount(transaction.getAmount()), Integer::sum);
-//        }
-//         return sumByMonths;
-//    }
-
 
     public HashMap<String, Integer> pointsPerMonth(List<Transaction> transactions, LocalDateTime start, LocalDateTime end) {
 
         HashMap<String, Integer> sumByMonths = prepareMap(start, end);
 
         for (Transaction transaction : transactions) {
-//            sumByMonths.merge(
-//                    transaction.getTimestamp().getMonth().name(),
-//                    calculatePointsForAmount(transaction.getAmount()), Integer::sum);
             String key = transaction.getTimestamp().getMonth().name();
             sumByMonths.put(key, sumByMonths.get(key) + calculatePointsForAmount(transaction.getAmount()));
         }

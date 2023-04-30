@@ -30,8 +30,8 @@ public class TransactionService {
     }
 
     public List<Transaction> getAllTransactionsForCustomer(long customerId) {
-
-        return transactionRepository.findByCustomerId(customerId);    }
+        return transactionRepository.findByCustomerId(customerId);
+    }
 
     public List<Transaction> getAllTransactionsForCustomerBetween(long customerId, LocalDateTime start, LocalDateTime end) {
         return transactionRepository.findByCustomerIdAndTimestampBetween(customerId, start, end);
@@ -39,11 +39,6 @@ public class TransactionService {
 
     public Transaction createTransaction(Transaction transaction) {
         return transactionRepository.save(transaction);
-    }
-
-    /////////////////////////////
-    public List<Transaction> createTransactions(List<Transaction> transactions) {
-        return transactionRepository.saveAll(transactions);
     }
 
     public Transaction updateTransaction(long id, Transaction transaction) {

@@ -3,6 +3,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -12,28 +13,33 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
 
+@Slf4j
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ErrorDetails resourceNotFoundException(ResourceNotFoundException exception, WebRequest request) {
-        return new ErrorDetails(new Date(), exception.getMessage(), request.getDescription(false));
+    public ResponseEntity<ErrorDetails> resourceNotFoundException(ResourceNotFoundException exception, WebRequest request) {
+        log.error("Exception: {}", exception.getMessage());
+        ErrorDetails errorDetails = new ErrorDetails(new Date(), exception.getMessage(), request.getDescription(false));
+        return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<?> validationExceptions(MethodArgumentNotValidException exception) {
+    public ResponseEntity<?> validationExceptions(MethodArgumentNotValidException exception, WebRequest request) {
         Map<String, String> errors = new HashMap<>();
         exception.getBindingResult().getAllErrors().forEach((error) -> {
             String fieldName = ((FieldError) error).getField();
             String errorMessage = error.getDefaultMessage();
             errors.put(fieldName, errorMessage);
         });
+
+        log.error("Failed validation: {}", errors);
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
-    public ErrorDetails globalExceptionHandler(Exception ex, WebRequest request) {
-         return new ErrorDetails(new Date(), ex.getMessage(), request.getDescription(false));
+    public ResponseEntity<ErrorDetails> globalExceptionHandler(Exception exception, WebRequest request) {
+        log.error("Unexpected exception: {}", exception.getMessage());
+        ErrorDetails errorDetails = new ErrorDetails(new Date(), exception.getMessage(), request.getDescription(false));
+        return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

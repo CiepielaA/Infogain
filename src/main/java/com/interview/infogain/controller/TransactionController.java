@@ -4,11 +4,13 @@ import com.interview.infogain.model.Transaction;
 import com.interview.infogain.service.TransactionService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/transactions")
 @RequiredArgsConstructor
@@ -18,17 +20,16 @@ public class TransactionController {
 
     @GetMapping
     public List<Transaction> getAllTransactions() {
-        return transactionService.getAllTransactions();
+        List<Transaction> transactions = transactionService.getAllTransactions();
+        log.info("Found {} transactions", transactions.size());
+        return transactions;
     }
 
     @GetMapping("/customers/{customerId}")
     public List<Transaction> getAllTransactionsForCustomer(@PathVariable long customerId) {
-        return transactionService.getAllTransactionsForCustomer(customerId);
-    }
-
-    @GetMapping("/{id}")
-    public Transaction getTransactionById(@PathVariable long id) {
-        return transactionService.getTransactionById(id);
+        List<Transaction> transactionsForCustomer = transactionService.getAllTransactionsForCustomer(customerId);
+        log.info("Found {} transactions for customer with id: {}", transactionsForCustomer.size(), customerId);
+        return transactionsForCustomer;
     }
 
     @PostMapping
@@ -38,11 +39,11 @@ public class TransactionController {
     }
 
     ////////////////////////
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public List<Transaction> createTransaction(@Valid @RequestBody List<Transaction> transactions) {
-        return transactionService.createTransactions(transactions);
-    }
+//    @PostMapping
+//    @ResponseStatus(HttpStatus.CREATED)
+//    public List<Transaction> createTransactions(@Valid @RequestBody List<Transaction> transactions) {
+//        return transactionService.createTransactions(transactions);
+//    }
 
     @PutMapping("/{id}")
     public Transaction updateTransaction(@PathVariable long id, @Valid @RequestBody Transaction transaction) {
@@ -50,6 +51,7 @@ public class TransactionController {
     }
 
     @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteTransaction(@PathVariable long id) {
         transactionService.deleteTransaction(id);
     }
