@@ -38,13 +38,6 @@ public class TransactionController {
         return transactionService.createTransaction(transaction);
     }
 
-    ////////////////////////
-//    @PostMapping
-//    @ResponseStatus(HttpStatus.CREATED)
-//    public List<Transaction> createTransactions(@Valid @RequestBody List<Transaction> transactions) {
-//        return transactionService.createTransactions(transactions);
-//    }
-
     @PutMapping("/{id}")
     public Transaction updateTransaction(@PathVariable long id, @Valid @RequestBody Transaction transaction) {
         return transactionService.updateTransaction(id, transaction);
@@ -55,5 +48,4 @@ public class TransactionController {
     public void deleteTransaction(@PathVariable long id) {
         transactionService.deleteTransaction(id);
     }
-
 }

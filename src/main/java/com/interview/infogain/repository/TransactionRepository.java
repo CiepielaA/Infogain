@@ -14,5 +14,4 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
 
     List<Transaction> findByTimestampBetween(LocalDateTime start, LocalDateTime end);
 
-    List<Transaction> findByCustomerIdAndTimestampBetween(Long customerId, LocalDateTime startTimestamp, LocalDateTime endTimestamp);
 }

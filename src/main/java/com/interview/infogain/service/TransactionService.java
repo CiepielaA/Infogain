@@ -33,10 +33,6 @@ public class TransactionService {
         return transactionRepository.findByCustomerId(customerId);
     }
 
-    public List<Transaction> getAllTransactionsForCustomerBetween(long customerId, LocalDateTime start, LocalDateTime end) {
-        return transactionRepository.findByCustomerIdAndTimestampBetween(customerId, start, end);
-    }
-
     public Transaction createTransaction(Transaction transaction) {
         return transactionRepository.save(transaction);
     }
